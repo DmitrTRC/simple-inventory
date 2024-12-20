@@ -1,16 +1,50 @@
-# This is a sample Python script.
+import os
+import sqlite3
 
-# Press ⇧F10 to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+conn = sqlite3.connect('users.db')
+cursor = conn.cursor()
 
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+SQL_BASE_PATH = 'SQL/'
 
 
-# Press the green button in the gutter to run the script.
+class User:
+    def __init__(self, username, email, age):
+        self.username = username
+        self.email = email
+        self.age = age
+
+
+def create_table(table_name):
+    sql_script_name = f'create_{table_name}.sql'
+    script_path = os.path.join(SQL_BASE_PATH, sql_script_name)
+
+    with open(script_path, 'r') as fd:
+        sql_script = fd.read()
+        cursor.execute(sql_script)
+        conn.commit()
+
+
+def add_user(user: User):
+    cursor.execute(f'INSERT INTO users (username, email, age )VALUES (?, ?, ?)', (user.username, user.email, user.age))
+    conn.commit()
+
+
+def main():
+    create_table('users')
+    add_user(User(
+        'Arina',
+        'Arina@gmail.com',
+        age=17
+    ))
+
+    add_user(User(
+        'Vlad',
+        'Vlad@gmail.com',
+        age=20
+    ))
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    main()
+    if conn:
+        conn.close()
