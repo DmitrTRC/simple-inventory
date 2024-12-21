@@ -2,7 +2,7 @@ class ORM:
     def __init__(self):
         pass
 
-    def insert_item(self):
+    def insert_item(self, table: str, data: dict):
         pass
 
     def select_item(self):

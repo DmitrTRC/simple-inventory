@@ -24,8 +24,8 @@ def create_table(table_name):
         conn.commit()
 
 
-def add_user(user: User):
-    cursor.execute(f'INSERT INTO users (username, email, age )VALUES (?, ?, ?)', (user.username, user.email, user.age))
+def add_user(user: User): # service layer
+    cursor.execute(f'INSERT INTO users (username, email, age )VALUES (?, ?, ?)', (user.username, user.email, user.age)) # ORM Layer "Insert"
     conn.commit()
 
 
