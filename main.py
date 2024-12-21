@@ -27,6 +27,12 @@ def create_table(table_name):
 def add_user(user: User):
     cursor.execute(f'INSERT INTO users (username, email, age )VALUES (?, ?, ?)', (user.username, user.email, user.age))
     conn.commit()
+def get_all_usernames():
+    cursor.execute(f'SELECT username FROM users')
+    users = cursor.fetchall()
+    usernames = set([user[0] for user in users])
+    for user in usernames:
+        print(user)
 
 
 def main():
@@ -42,9 +48,8 @@ def main():
         'Vlad@gmail.com',
         age=20
     ))
-
-
 if __name__ == '__main__':
     main()
+    get_all_usernames()
     if conn:
         conn.close()
