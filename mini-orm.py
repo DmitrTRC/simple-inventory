@@ -1,21 +1,21 @@
 class ORM:
     def __init__(self):
-        pass
+        raise NotImplementedError
 
     def insert_item(self, table: str, data: dict):
-        pass
+        raise NotImplementedError
 
     def select_item(self):
-        pass
+        raise NotImplementedError
 
     def update_item(self):
-        pass
+        raise NotImplementedError
 
     def delete_item(self):
-        pass
+        raise NotImplementedError
 
     def fetch_one_item(self):
-        pass
+        raise NotImplementedError
 
     def fetch_all_items(self):
-        pass
+        raise NotImplementedError
