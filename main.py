@@ -28,6 +28,16 @@ def add_user(user: User): # service layer
     cursor.execute(f'INSERT INTO users (username, email, age )VALUES (?, ?, ?)', (user.username, user.email, user.age)) # ORM Layer "Insert"
     conn.commit()
 
+def get_all_users(table_name):
+    query = f'SELECT * FROM {table_name};'
+    try:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+        for row in rows:
+            print(f'User: {row}')
+    except sqlite3.Error as e:
+        print(f'An error occured: {e}')
+
 
 def main():
     create_table('users')
@@ -42,6 +52,8 @@ def main():
         'Vlad@gmail.com',
         age=20
     ))
+
+    get_all_users('users')
 
 
 if __name__ == '__main__':
