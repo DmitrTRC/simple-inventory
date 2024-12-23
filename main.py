@@ -8,7 +8,7 @@ from mini_orm import ORM
 SQL_BASE_PATH = 'SQL/'
 
 
-class User:
+class User:  # TODO: Separate to Models
     def __init__(self, username, email, phone, age):
         self.username = username
         self.email = email
@@ -16,7 +16,7 @@ class User:
         self.age = age
 
 
-class TableOperations:
+class TableOperations: # TODO: Move to ORM
     @staticmethod
     def create_table(orm: ORM, table_name: str):
         sql_script_name = f'create_{table_name}.sql'
@@ -33,7 +33,7 @@ class TableOperations:
             print(f"SQLite error during table creation: {e}")
 
     @staticmethod
-    def add_user(orm: ORM, user: User):
+    def add_user(orm: ORM, user: User): # TODO: Move to Service
         try:
             correct_email = TableOperations.is_email_valid(user.email)
             user.email = correct_email
@@ -43,14 +43,14 @@ class TableOperations:
             print(e)
 
     @staticmethod
-    def is_email_valid(email):
+    def is_email_valid(email): # TODO: Move to Util
         try:
             v = validate_email(email)
             return v.normalized.lower()
         except EmailNotValidError as e:
             raise EmailNotValidError(f'Email format is not correct: {e}')
 
-def get_all_users(orm: ORM, table_name: str):
+def get_all_users(orm: ORM, table_name: str): # TODO: Move to Service
     query = f'SELECT * FROM {table_name};'
     try:
         orm.cursor.execute(query)

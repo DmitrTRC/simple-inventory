@@ -2,6 +2,7 @@ import sqlite3
 
 class ORM:
     def __init__(self, db_name: str):
+        #  TODO: Make connection and cursor Privates. Write getter for __cursor.
         self.connection = sqlite3.connect(db_name)
         self.cursor = self.connection.cursor()
 
@@ -27,3 +28,5 @@ class ORM:
 
     def fetch_all_items(self):
         raise NotImplementedError
+
+# TODO: Write Destructor. Close connection! ( override __del__() , and if connnection : close connection )
