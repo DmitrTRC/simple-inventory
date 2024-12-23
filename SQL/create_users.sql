@@ -1,8 +1,8 @@
-create table if not exists Users
+create table if not exists users
 (
-    id       INTEGER PRIMARY KEY,
+    id INTEGER NOT NULL PRIMARY KEY,
+    email TEXT NOT NULL UNIQUE,
     username TEXT NOT NULL,
-    email    TEXT NOT NULL,
-    age      INTEGER
-)
-
+    phone INTEGER,
+    age INTEGER NOT NULL
+);

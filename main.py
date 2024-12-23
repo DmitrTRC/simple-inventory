@@ -2,73 +2,86 @@ import os
 import re
 import sqlite3
 
-conn = sqlite3.connect('users.db')
-cursor = conn.cursor()
+from email_validator import validate_email, EmailNotValidError
+from mini_orm import ORM
 
 SQL_BASE_PATH = 'SQL/'
 
 
 class User:
-    def __init__(self, username, email, age):
+    def __init__(self, username, email, phone, age):
         self.username = username
         self.email = email
+        self.phone = phone
         self.age = age
 
-def create_table(table_name):
-    sql_script_name = f'create_{table_name}.sql'
-    script_path = os.path.join(SQL_BASE_PATH, sql_script_name)
 
-    with open(script_path, 'r') as fd:
-        sql_script = fd.read()
-        cursor.execute(sql_script)
-        conn.commit()
+class TableOperations:
+    @staticmethod
+    def create_table(orm: ORM, table_name: str):
+        sql_script_name = f'create_{table_name}.sql'
+        script_path = os.path.join(SQL_BASE_PATH, sql_script_name)
+        try:
+            with open(script_path, 'r') as fd:
+                sql_script = fd.read()
+                orm.cursor.execute(sql_script)
+                orm.connection.commit()
+            print(f"Table '{table_name}' created successfully.")
+        except FileNotFoundError:
+            print(f"SQL script '{sql_script_name}' not found in path: {SQL_BASE_PATH}.")
+        except sqlite3.Error as e:
+            print(f"SQLite error during table creation: {e}")
 
-def is_email_correct(email):
-    'Check email formatting'
-    email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    if re.match(email_regex, email):
-        return email
-    else:
-        raise ValueError('Email format is not correct. Pleae provide a valid email.')
-    
+    @staticmethod
+    def add_user(orm: ORM, user: User):
+        try:
+            correct_email = TableOperations.is_email_valid(user.email)
+            user.email = correct_email
+            user_data = vars(user) # converts user object to dict
+            orm.insert_item('users', user_data)
+        except EmailNotValidError as e:
+            print(e)
 
-def add_user(user: User): # service layer
-    try:
-        correct_email = is_email_correct(user.email)
-        cursor.execute(f'INSERT INTO users (username, email, age )VALUES (?, ?, ?)', (user.username, correct_email, user.age)) # ORM Layer "Insert"
-        conn.commit()
-    except ValueError as e:
-        print(e)
+    @staticmethod
+    def is_email_valid(email):
+        try:
+            v = validate_email(email)
+            return v.normalized.lower()
+        except EmailNotValidError as e:
+            raise EmailNotValidError(f'Email format is not correct: {e}')
 
-def get_all_users(table_name):
+def get_all_users(orm: ORM, table_name: str):
     query = f'SELECT * FROM {table_name};'
     try:
-        cursor.execute(query)
-        rows = cursor.fetchall()
+        orm.cursor.execute(query)
+        rows = orm.cursor.fetchall()
         for row in rows:
             print(f'User: {row}')
     except sqlite3.Error as e:
-        print(f'An error occured: {e}')
+        print(f'An error occurred: {e}')
 
 
 def main():
-    create_table('users')
-    add_user(User(
+    db_name = 'users.db'
+    orm = ORM(db_name)
+    TableOperations.create_table(orm, 'users')
+
+    TableOperations.add_user(orm, User(
         'Arina',
         'Arina@gmail.com',
-        age=17
+        123456789,
+        17
     ))
 
-    add_user(User(
+    TableOperations.add_user(orm, User(
         'Vlad',
         'Vlad@gmail.com',
+        987654321,
         age=20
     ))
 
-    get_all_users('users')
+    get_all_users(orm, 'users')
 
 
 if __name__ == '__main__':
     main()
-    if conn:
-        conn.close()
