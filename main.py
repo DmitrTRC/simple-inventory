@@ -1,11 +1,22 @@
 import os
-import re
 import sqlite3
 
 from email_validator import validate_email, EmailNotValidError
-from mini_orm import ORM
+from lib.mini_orm import ORM
+
+import logging
+
+logging.getLogger().setLevel(logging.INFO)
 
 SQL_BASE_PATH = 'SQL/'
+
+class DatabaseError(Exception):
+    """Custom exception class for database-related errors."""
+
+    def __init__(self, message: str) -> None:
+        super().__init__(message)
+
+
 
 
 class User:  # TODO: Separate to Models
@@ -16,7 +27,7 @@ class User:  # TODO: Separate to Models
         self.age = age
 
 
-class TableOperations: # TODO: Move to ORM
+class TableOperations:  # TODO: Move to ORM
     @staticmethod
     def create_table(orm: ORM, table_name: str):
         sql_script_name = f'create_{table_name}.sql'
@@ -33,24 +44,25 @@ class TableOperations: # TODO: Move to ORM
             print(f"SQLite error during table creation: {e}")
 
     @staticmethod
-    def add_user(orm: ORM, user: User): # TODO: Move to Service
+    def add_user(orm: ORM, user: User):  # TODO: Move to Service
         try:
             correct_email = TableOperations.is_email_valid(user.email)
             user.email = correct_email
-            user_data = vars(user) # converts user object to dict
+            user_data = vars(user)  # converts user object to dict
             orm.insert_item('users', user_data)
         except EmailNotValidError as e:
             print(e)
 
     @staticmethod
-    def is_email_valid(email): # TODO: Move to Util
+    def is_email_valid(email):  # TODO: Move to Util
         try:
             v = validate_email(email)
             return v.normalized.lower()
         except EmailNotValidError as e:
             raise EmailNotValidError(f'Email format is not correct: {e}')
 
-def get_all_users(orm: ORM, table_name: str): # TODO: Move to Service
+
+def get_all_users(orm: ORM, table_name: str):  # TODO: Move to Service
     query = f'SELECT * FROM {table_name};'
     try:
         orm.cursor.execute(query)
