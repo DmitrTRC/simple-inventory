@@ -3,8 +3,6 @@ from models.models import User
 from service.service import get_all_users, add_user
 
 
-
-
 def main():
     db_name = 'users.db'
     orm = ORM(db_name)

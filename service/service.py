@@ -19,8 +19,9 @@ def add_user(orm: ORM, user: User):
 def get_all_users(orm: ORM, table_name: str):
     query = f'SELECT * FROM {table_name};'
     try:
-        orm.cursor.execute(query)
-        rows = orm.cursor.fetchall()
+        cursor = orm.get_cursor()
+        cursor.execute(query)
+        rows = cursor.fetchall()
         for row in rows:
             print(f'User: {row}')
     except sqlite3.Error as e:

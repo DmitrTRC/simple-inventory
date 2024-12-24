@@ -6,8 +6,14 @@ SQL_BASE_PATH = 'SQL/'
 
 class ORM:
     def __init__(self, db_name: str):
-        self.connection = sqlite3.connect(db_name)
-        self.cursor = self.connection.cursor()
+        self.__connection = sqlite3.connect(db_name)
+        self.__cursor = self.__connection.cursor()
+
+    def get_cursor(self):
+        return self.__cursor
+
+    def get_connection(self):
+        return self.__connection
 
     def create_table(self, table_name: str):
         sql_script_name = f'create_{table_name}.sql'
@@ -15,8 +21,8 @@ class ORM:
         try:
             with open(script_path, 'r') as fd:
                 sql_script = fd.read()
-                self.cursor.execute(sql_script)
-                self.connection.commit()
+                self.__cursor.execute(sql_script)
+                self.__connection.commit()
             print(f"Table '{table_name}' created successfully.")
         except FileNotFoundError:
             print(f"SQL script '{sql_script_name}' not found in path: {SQL_BASE_PATH}.")
@@ -28,8 +34,8 @@ class ORM:
         placeholders = ', '.join(['?' for _ in data])
         values = tuple(data.values())
         query = f'INSERT INTO {table} ({columns}) VALUES ({placeholders})'
-        self.cursor.execute(query, values)
-        self.connection.commit()
+        self.__cursor.execute(query, values)
+        self.__connection.commit()
 
     def select_item(self):
         raise NotImplementedError
