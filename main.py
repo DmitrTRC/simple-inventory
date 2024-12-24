@@ -1,7 +1,3 @@
-import os
-import sqlite3
-
-from email_validator import validate_email, EmailNotValidError
 from mini_orm import ORM
 from models.models import User
 from service.service import get_all_users, add_user
