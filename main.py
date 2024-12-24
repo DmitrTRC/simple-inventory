@@ -40,6 +40,7 @@ def add_user(user: User): # service layer
     except ValueError as e:
         print(e)
 
+
 def get_all_users(table_name):
     query = f'SELECT * FROM {table_name};'
     try:
@@ -70,5 +71,6 @@ def main():
 
 if __name__ == '__main__':
     main()
+    get_all_usernames()
     if conn:
         conn.close()
