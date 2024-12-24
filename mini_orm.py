@@ -51,3 +51,7 @@ class ORM:
 
     def fetch_all_items(self):
         raise NotImplementedError
+
+    def __del__(self):
+        if self.__connection:
+            self.__connection.close()
