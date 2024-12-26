@@ -1,29 +1,18 @@
-from mini_orm import ORM
-from models.models import User
-from service.service import get_all_users, add_user
+import sys
+
+from lazy_orm.db_manager import DatabaseManager
+from model.user_model import User
+from service.user_srv import get_all_users, add_user
+
+import logging
+
+USERS_DB_NAME = 'users.db'
 
 
 def main():
-    db_name = 'users.db'
-    orm = ORM(db_name)
-    ORM.create_table(orm, 'users')
-
-    add_user(orm, User(
-        'Arina',
-        'Arina@gmail.com',
-        123456789,
-        17
-    ))
-
-    add_user(orm, User(
-        'Vlad',
-        'Vlad@gmail.com',
-        987654321,
-        age=20
-    ))
-
-    get_all_users(orm, 'users')
+    db_manager = DatabaseManager(USERS_DB_NAME)
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     main()
