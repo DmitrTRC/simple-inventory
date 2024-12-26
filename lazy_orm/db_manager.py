@@ -199,7 +199,7 @@ class DatabaseManager:
         Initializes the database by executing SQL commands from 'create_users_db.sql' file.
         """
         try:
-            print(f'Current Path: {os.getcwd()}')
+            logging.info(f'Current Path: {os.getcwd()}')
 
             with open(f'sql/create_{self.__db_name}_db.sql') as fd:
                 sql = fd.read()

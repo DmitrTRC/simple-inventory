@@ -1,5 +1,6 @@
 import asyncio
 import sys
+import time
 
 from lazy_orm.db_manager import DatabaseManager
 from model.user_model import User
@@ -14,6 +15,7 @@ async def main():
     db_manager = DatabaseManager(USERS_DB_NAME)
 
     users = await get_all_users(db_manager)
+    add_user(db_manager, 'Arina', 'Arisha@librem.com', 20)
 
     for user in users:
         print(user)
