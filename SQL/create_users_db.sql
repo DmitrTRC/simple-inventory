@@ -6,3 +6,5 @@ create table if not exists users
     phone INTEGER,
     age INTEGER NOT NULL
 );
+
+-- Add is_admin : Bool = False

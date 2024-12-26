@@ -1,29 +1,26 @@
-from mini_orm import ORM
-from models.models import User
-from service.service import get_all_users, add_user
+import asyncio
+import sys
+import time
+
+from lazy_orm.db_manager import DatabaseManager
+from model.user_model import User
+from service.user_srv import get_all_users, add_user
+
+import logging
+
+USERS_DB_NAME = 'users'
 
 
-def main():
-    db_name = 'users.db'
-    orm = ORM(db_name)
-    ORM.create_table(orm, 'users')
+async def main():
+    db_manager = DatabaseManager(USERS_DB_NAME)
 
-    add_user(orm, User(
-        'Arina',
-        'Arina@gmail.com',
-        123456789,
-        17
-    ))
+    users = await get_all_users(db_manager)
+    add_user(db_manager, 'Arina', 'Arisha@librem.com', 20)
 
-    add_user(orm, User(
-        'Vlad',
-        'Vlad@gmail.com',
-        987654321,
-        age=20
-    ))
-
-    get_all_users(orm, 'users')
+    for user in users:
+        print(user)
 
 
 if __name__ == '__main__':
-    main()
+    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    asyncio.run(main())
