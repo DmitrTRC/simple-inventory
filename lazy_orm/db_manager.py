@@ -55,7 +55,8 @@ class DatabaseManager:
         """
         try:
             return sqlite3.connect(self.db_path)
-        except sqlite3.OperationalError:
+        except sqlite3.OperationalError as e:
+            logging.exception(f'Operational Error {e} when trying ti connect ro {self.db_path}')
             os.makedirs(os.path.dirname(self.db_path), exist_ok=True)
             return sqlite3.connect(self.db_path)
         except Exception as e:
@@ -217,12 +218,12 @@ class DatabaseManager:
         """
         try:
             self.__cursor.execute(
-                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.__db_name.capitalize()}'")
+                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.__db_name}'")
             table_exists = self.__cursor.fetchall()
             if not table_exists:
                 logging.warning('Table does not exists! ')
                 self._init_db()
             else:
-                logging.info(f'Database {self.__db_name} exists and checked!')
+                logging.info(f'Database {self.db_path} exists and checked!')
         except sqlite3.Error as e:
             raise DatabaseError(f"Check database existence operation failed: {e.args[0]}")
