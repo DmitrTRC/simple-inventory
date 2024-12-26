@@ -23,12 +23,7 @@ class DatabaseError(Exception):
 
 class DatabaseManager:
     """
-    A class to manage SQLite database operations.
-
-    Attributes:
-        db_path (str): The path to the SQLite database file.
-        conn (sqlite3.Connection): The SQLite connection object.
-        __cursor (sqlite3.Cursor): The SQLite cursor object.
+    A class to manage SQLite database operations, including creating, reading, updating, and deleting records, as well as initializing and checking database existence.
     """
 
     def __init__(self, db_name: str, db_dir: str = 'data') -> None:
