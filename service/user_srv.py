@@ -1,3 +1,5 @@
+from typing import List
+
 from lazy_orm.db_manager import DatabaseManager, DatabaseError
 from utils.email import validate_and_normalize_email
 
@@ -49,6 +51,12 @@ def add_user(orm: DatabaseManager, username: str, email: str, age: int) -> bool:
 
 
 async def add_admin_user(db_manager):
+    """
+    Adds an admin user to the database with predefined details.
+
+    :param db_manager: The database manager instance responsible for handling database operations.
+    :return: None
+    """
     try:
         column_values = {
             'username': 'Admin',
@@ -63,14 +71,19 @@ async def add_admin_user(db_manager):
 
 
 async def handle_empty_users(db_manager: DatabaseManager):
-    """Handles the scenario when no products are present in the database."""
+    """
+    Handles the case when there are no users in the database by adding an admin user.
+
+    :param db_manager: An instance of DatabaseManager used to interact with the database.
+    :return: None
+    """
     await add_admin_user(db_manager)
     logging.info('No users found. Admin User have been added.')
 
 
-async def get_all_users(db_manager: DatabaseManager):
+async def get_all_users(db_manager: DatabaseManager)-> List[dict]:
     try:
-        users = await db_manager.fetch_all(USERS_TABLE)
+        users = await db_manager.fetch_all(USERS_TABLE, USERS_COLUMNS)
         if not users:
             await handle_empty_users(db_manager)
             users = await db_manager.fetch_all(USERS_TABLE, USERS_COLUMNS)

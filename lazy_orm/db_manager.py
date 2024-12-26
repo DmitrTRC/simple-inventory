@@ -206,7 +206,7 @@ class DatabaseManager:
         try:
             print(f'Current Path: {os.getcwd()}')
 
-            with open(f'db/sql/create_{self.__db_name}_db.sql') as fd:
+            with open(f'sql/create_{self.__db_name}_db.sql') as fd:
                 sql = fd.read()
 
             self.__cursor.executescript(sql)
