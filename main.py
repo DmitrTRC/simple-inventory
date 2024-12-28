@@ -14,8 +14,11 @@ USERS_DB_NAME = 'users'
 async def main():
     db_manager = DatabaseManager(USERS_DB_NAME)
 
+    add_user(db_manager, 'Arina5', 'Arisha5@librem.com', 20)
+    add_user(db_manager, 'Alex', 'something@gmail.com', 40)
+    add_user(db_manager, 'Dmitr', 'morozovd@yandex.ru', 18)
+
     users = await get_all_users(db_manager)
-    # add_user(db_manager, 'Arina', 'Arisha@librem.com', 20)
 
     for user in users:
         print(user)
