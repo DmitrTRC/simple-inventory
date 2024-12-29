@@ -2,6 +2,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 
 LOG_NAME = 'simple_inventory.log'
+LOGGER_LEVEL = logging.INFO
 
 
 class LogColors:
@@ -43,7 +44,7 @@ def setup_logging():
 
     # Get the root logger
     logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
+    logger.setLevel(LOGGER_LEVEL)
 
     log_format, date_format = get_formatter()
     file_formatter = logging.Formatter(log_format, date_format)
