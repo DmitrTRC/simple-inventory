@@ -6,7 +6,7 @@ from lazy_orm.db_manager import DatabaseManager
 from model.user_model import User
 from service.user_srv import get_all_users, add_user
 
-from utils.logging import setup_logging
+from utils.logging_simp_inv import setup_logging
 
 USERS_DB_NAME = 'users'
 
