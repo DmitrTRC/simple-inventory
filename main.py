@@ -6,7 +6,7 @@ from lazy_orm.db_manager import DatabaseManager
 from model.user_model import User
 from service.user_srv import get_all_users, add_user
 
-import logging
+from utils.logging_simp_inv import setup_logging
 
 USERS_DB_NAME = 'users'
 
@@ -16,7 +16,7 @@ async def main():
 
     add_user(db_manager, 'Arina5', 'Arisha5@librem.com', 20)
     add_user(db_manager, 'Alex', 'something@gmail.com', 40)
-    add_user(db_manager, 'Dmitr', 'morozovd@yandex.ru', 18)
+    add_user(db_manager, 'Dmitry', 'morozovd@yandex.ru', 18)
 
     users = await get_all_users(db_manager)
 
@@ -25,5 +25,5 @@ async def main():
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    setup_logging()
     asyncio.run(main())
