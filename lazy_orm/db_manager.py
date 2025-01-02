@@ -221,7 +221,7 @@ class DatabaseManager:
                 f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.__db_name}'")
             table_exists = self.__cursor.fetchall()
             if not table_exists:
-                logging.warning('Table does not exists! ')
+                logging.warning('Table does not exist! ')
                 self._init_db()
             else:
                 logging.info(f'Database {self.db_path} exists and checked!')
