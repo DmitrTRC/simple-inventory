@@ -203,6 +203,7 @@ class DatabaseManager:
             logging.info(f'Current Path: {os.getcwd()}')
 
             with open(f'sql/create_{self.__db_name}_db.sql') as fd:
+                # TODO:  Fix to relative PATH
                 sql = fd.read()
 
             self.__cursor.executescript(sql)
@@ -218,7 +219,7 @@ class DatabaseManager:
         """
         try:
             self.__cursor.execute(
-                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.__db_name}'")
+                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.__db_name}'")  # TODO: move f-strigns to constants
             table_exists = self.__cursor.fetchall()
             if not table_exists:
                 logging.warning('Table does not exist! ')
