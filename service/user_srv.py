@@ -81,7 +81,7 @@ async def handle_empty_users(db_manager: DatabaseManager):
     logging.info('No users found. Admin User have been added.')
 
 
-async def get_all_users(db_manager: DatabaseManager)-> List[dict]:
+async def get_all_users(db_manager: DatabaseManager) -> List[dict]:
     try:
         users = await db_manager.fetch_all(USERS_TABLE, USERS_COLUMNS)
         if not users:
@@ -91,3 +91,7 @@ async def get_all_users(db_manager: DatabaseManager)-> List[dict]:
     except DatabaseError as e:
         logging.exception(f"Error fetching users: {e}")
         return []
+
+
+async def _is_mail_unique(db_manager: DatabaseManager, email: str) -> bool:
+    pass

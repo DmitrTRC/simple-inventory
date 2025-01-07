@@ -206,6 +206,7 @@ class DatabaseManager:
             logging.info(f'Current Path: {os.getcwd()}')
 
             with open(f'sql/create_{self.__db_name}_db.sql') as fd:
+                # TODO:  Fix to relative PATH
                 sql = fd.read()
 
             self.__cursor.executescript(sql)
@@ -220,8 +221,10 @@ class DatabaseManager:
         Checks if the required tables exist in the database, and initializes the database if not.
         """
         try:
+
             query = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.__db_name}'"
             self.__cursor.execute(query)
+
             table_exists = self.__cursor.fetchall()
             if not table_exists:
                 logging.warning('Table does not exist! ')
