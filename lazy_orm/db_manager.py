@@ -89,10 +89,8 @@ class DatabaseManager:
         placeholders = ", ".join("?" * len(column_values))
 
         try:
-            self.__cursor.execute(
-                f"INSERT INTO {table} ({columns}) VALUES ({placeholders})",
-                values
-            )
+            query = f'INSERT INTO {table} ({columns}) VALUES ({placeholders})'
+            self.__cursor.execute(query, values)
             self.conn.commit()
         except sqlite3.Error as e:
             raise DatabaseError(f"Insert operation failed: {e.args[0]}")
@@ -110,7 +108,8 @@ class DatabaseManager:
         """
         columns_str = ", ".join(columns)
         try:
-            self.__cursor.execute(f"SELECT {columns_str} FROM {table}")
+            query = f'SELECT {columns_str} FROM {table}'
+            self.__cursor.execute(query)
             rows = self.__cursor.fetchall()
             return [self._row_to_dict(row, columns) for row in rows]
         except sqlite3.Error as e:
@@ -130,7 +129,8 @@ class DatabaseManager:
         """
         columns_str = '*' if columns is None else ', '.join(columns)
         try:
-            self.__cursor.execute(f"SELECT {columns_str} FROM {table} WHERE {condition}")
+            query = f"SELECT {columns_str} FROM {table} WHERE {condition}"
+            self.__cursor.execute(query)
             rows = self.__cursor.fetchall()
             col_names = [desc[0] for desc in self.__cursor.description]
             return [self._row_to_dict(row, col_names) for row in rows]
@@ -146,8 +146,10 @@ class DatabaseManager:
             row_id (int): The ID of the row to delete.
         """
         try:
-            self.__cursor.execute(f"DELETE FROM {table} WHERE id = ?", (row_id,))
+            query = f'DELETE FROM {table} WHERE id = ?'
+            self.__cursor.execute(query, (row_id,))
             self.conn.commit()
+            logging.info(f'Deletion of the user with ID = {row_id} is complete')
         except sqlite3.Error as e:
             raise DatabaseError(f"Delete operation failed: {e.args[0]}")
 
@@ -171,10 +173,10 @@ class DatabaseManager:
         """
         columns = ', '.join(f"{col} = ?" for col in column_values.keys())
         values = list(column_values.values())
-        sql = f"UPDATE {table} SET {columns} WHERE {condition}"
+        query = f"UPDATE {table} SET {columns} WHERE {condition}"
 
         try:
-            self.__cursor.execute(sql, values)
+            self.__cursor.execute(query, values)
             self.conn.commit()
         except sqlite3.Error as e:
             raise DatabaseError(f"Update operation failed: {e.args[0]}")
@@ -190,7 +192,8 @@ class DatabaseManager:
             int: The total number of rows.
         """
         try:
-            self.__cursor.execute(f"SELECT COUNT(*) FROM {table}")
+            query = f'SELECT COUNT(*) FROM {table}'
+            self.__cursor.execute(query)
             return self.__cursor.fetchone()[0]
         except sqlite3.Error as e:
             raise DatabaseError(f"Get table size operation failed: {e.args[0]}")
@@ -218,8 +221,10 @@ class DatabaseManager:
         Checks if the required tables exist in the database, and initializes the database if not.
         """
         try:
-            self.__cursor.execute(
-                f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.__db_name}'")  # TODO: move f-strigns to constants
+
+            query = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.__db_name}'"
+            self.__cursor.execute(query)
+
             table_exists = self.__cursor.fetchall()
             if not table_exists:
                 logging.warning('Table does not exist! ')
