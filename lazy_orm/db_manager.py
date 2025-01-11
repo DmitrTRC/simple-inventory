@@ -204,9 +204,9 @@ class DatabaseManager:
         """
         try:
             logging.info(f'Current Path: {os.getcwd()}')
+            generic_creator_file = os.path.join('sql', f'create_{self.__db_name}_db.sql')
 
-            with open(f'sql/create_{self.__db_name}_db.sql') as fd:
-                # TODO:  Fix to relative PATH
+            with open(os.path.join(generic_creator_file)) as fd:
                 sql = fd.read()
 
             self.__cursor.executescript(sql)

@@ -9,13 +9,14 @@ USERS_TABLE = 'users'
 USERS_COLUMNS = ['id', 'email', 'username', 'phone', 'age']
 
 
-def is_user_exists(db_manager: DatabaseManager, username: str) -> bool:
+def is_user_exists(db_manager: DatabaseManager, username: str, email: str) -> bool:
     """
     :param db_manager: The database manager instance used to interact with the database.
     :param username: The username of the user to check for existence in the database.
+    :param email: The email of the user to check for duplication in the database.
     :return: A boolean value indicating whether the user exists (True) or not (False).
     """
-    users = db_manager.fetch_if('users', f'username="{username}"')
+    users = db_manager.fetch_if('users', f'username="{username}" OR email="{email}"')
     return len(users) > 0
 
 
@@ -42,6 +43,10 @@ def add_user(orm: DatabaseManager, username: str, email: str, age: int) -> bool:
             'email': validate_and_normalize_email(email),
             'age': age,
         }
+
+        if is_user_exists(orm, username, email):
+            raise DatabaseError('User is already exists!')
+
         orm.insert('users', column_values)
         log_user_addition(username, email)
         return True
@@ -93,5 +98,3 @@ async def get_all_users(db_manager: DatabaseManager) -> List[dict]:
         return []
 
 
-async def _is_mail_unique(db_manager: DatabaseManager, email: str) -> bool:
-    pass
