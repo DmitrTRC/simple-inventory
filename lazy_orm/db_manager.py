@@ -198,13 +198,17 @@ class DatabaseManager:
         except sqlite3.Error as e:
             raise DatabaseError(f"Get table size operation failed: {e.args[0]}")
 
-    def _init_db(self) -> None:
+    def _init_db(self, start_path=None) -> None:
         """
         Initializes the database by executing SQL commands from 'create_users_db.sql' file.
         """
         try:
             logging.info(f'Current Path: {os.getcwd()}')
-            generic_creator_file = os.path.join('sql', f'create_{self.__db_name}_db.sql')
+
+            if start_path is None:
+                start_path = 'sql'
+
+            generic_creator_file = os.path.join(start_path, f'create_{self.__db_name}_db.sql')
 
             with open(os.path.join(generic_creator_file)) as fd:
                 sql = fd.read()
