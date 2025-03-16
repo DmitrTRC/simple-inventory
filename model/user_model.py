@@ -7,3 +7,4 @@ class User:
     email: str
     phone: str
     age: int
+
