@@ -8,7 +8,6 @@ import logging
 USERS_TABLE = 'users'
 USERS_COLUMNS = ['id', 'email', 'username', 'phone', 'age']
 
-
 def is_user_exists(db_manager: DatabaseManager, username: str, email: str) -> bool:
     """
     :param db_manager: The database manager instance used to interact with the database.

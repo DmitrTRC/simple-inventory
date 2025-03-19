@@ -209,6 +209,7 @@ class DatabaseManager:
                 start_path = 'sql'
 
             generic_creator_file = os.path.join(start_path, f'create_{self.__db_name}_db.sql')
+            logging.info(f'Generic Creator File: {generic_creator_file}')
 
             with open(os.path.join(generic_creator_file)) as fd:
                 sql = fd.read()
@@ -231,7 +232,7 @@ class DatabaseManager:
 
             table_exists = self.__cursor.fetchall()
             if not table_exists:
-                logging.warning('Table does not exist! ')
+                logging.warning(f'Table {self.__db_name} does not exist! ')
                 self._init_db()
             else:
                 logging.info(f'Database {self.db_path} exists and checked!')
