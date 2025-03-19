@@ -29,6 +29,7 @@ class DatabaseManager:
     """
 
     DEFAULT_DATABASE_DIRECTORY = 'data'
+    DEFAULT_SQL_SCRIPT_DIRECTORY = 'sql'
     SQL_WILDCARD_ALL_COLUMNS = '*'
 
     def __init__(self, db_name: str, db_dir: str = DEFAULT_DATABASE_DIRECTORY) -> None:
@@ -40,6 +41,8 @@ class DatabaseManager:
             db_dir (str): The directory path where the database file is stored.
         """
         self.database_path = os.path.join(db_dir, db_name)
+        self._db_name = db_name
+        self._ensure_db_directory()
         self.connection = self._initialize_database_connection()
         self.cursor = self.connection.cursor()
         self._ensure_database_existence()
@@ -64,6 +67,7 @@ class DatabaseManager:
         Raises:
             DatabaseError: If the connection fails due to unexpected errors.
         """
+
         try:
             logging.info(f"Connecting to the database at {self.database_path}...")
             return sqlite3.connect(self.database_path)
@@ -183,35 +187,44 @@ class DatabaseManager:
         """
         Checks if the database exists and initializes it if necessary.
         """
-        if not os.path.exists(self.database_path):
-            logging.info(f"Database '{self.database_path}' not found. Initializing a new database.")
-            self._initialize_database()
+        """
+        OLD
+         try:
+
+            query = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.__db_name}'"
+            self.__cursor.execute(query)
+
+            table_exists = self.__cursor.fetchall()
+            if not table_exists:
+                logging.warning('Table does not exist! ')
+                self._init_db()
+            else:
+                logging.info(f'Database {self.db_path} exists and checked!')
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Check database existence operation failed: {e.args[0]}")
+        """
+        try:
+
+            query = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self._db_name}'"
+            self.cursor.execute(query)
+
+            table_exists = self.cursor.fetchall()
+            if not table_exists:
+                logging.warning('Table does not exist! ')
+                self._initialize_database()
+            else:
+                logging.info(f'Database {self.database_path} exists and checked!')
+        except sqlite3.Error as e:
+            raise DatabaseError(f"Check database existence operation failed: {e.args[0]}")
 
     def _initialize_database(self) -> None:
         """
         Performs initial database setup using an SQL script if available.
         """
-        """
-                try:
-            logging.info(f'Current Path: {os.getcwd()}')
 
-            if start_path is None:
-                start_path = 'sql'
-
-            generic_creator_file = os.path.join(start_path, f'create_{self.__db_name}_db.sql')
-
-            with open(os.path.join(generic_creator_file)) as fd:
-                sql = fd.read()
-
-            self.__cursor.executescript(sql)
-            self.conn.commit()
-
-            logging.info(f'Database {self.__db_name} initialized successfully!')
-        except (FileNotFoundError, sqlite3.Error) as e:
-            raise DatabaseError(f'Database initialization failed: {e}')
-        """
         try:
-            init_script_path = os.path.join(self.DEFAULT_DATABASE_DIRECTORY, 'init.sql')
+            init_script_path = os.path.join(self.DEFAULT_SQL_SCRIPT_DIRECTORY, f'create_{self._db_name}_db.sql')
+
             if os.path.exists(init_script_path):
                 logging.info(f"Running initialization script: {init_script_path}")
                 with open(init_script_path, 'r') as script_file:
@@ -221,9 +234,18 @@ class DatabaseManager:
                 logging.info("Database initialized successfully.")
             else:
                 logging.warning("No initialization script found. Skipping setup.")
+
         except sqlite3.Error as error:
             logging.exception("Database initialization failed.")
             raise DatabaseError(f"Failed to initialize database: {error}")
+
+    def _ensure_db_directory(self) -> None:
+        """
+        Ensures the database directory exists before connecting.
+        """
+        if not os.path.exists(os.path.dirname(self.database_path)):
+            logging.info(f"Creating database directory: {os.path.dirname(self.database_path)}")
+            os.makedirs(os.path.dirname(self.database_path), exist_ok=True)
 
     def _execute_query(
             self,
