@@ -19,7 +19,7 @@ def is_user_exists(db_manager: DatabaseManager, username: str, email: str) -> bo
     Checks if the user exists in the database based on username or email.
     """
     condition = f'username="{username}" OR email="{email}"'
-    users = db_manager.fetch_if(USERS_TABLE, condition)
+    users = db_manager.fetch_rows_if(USERS_TABLE, condition)
     return len(users) > 0
 
 
@@ -37,7 +37,7 @@ def _add_user(
     Helper function to add a user to the database and log the action.
     """
     try:
-        db_manager.insert(USERS_TABLE, column_values)
+        db_manager.insert_row(USERS_TABLE, column_values)
         logger.info(log_message)
         return 'User added successfully.'
     except DatabaseError as e:
@@ -88,10 +88,11 @@ async def get_all_users(db_manager: DatabaseManager) -> List[dict]:
     Fetches all users from the database or adds an admin user if there are no users.
     """
     try:
-        users = await db_manager.fetch_all(USERS_TABLE, USER_COLUMNS)
+        users = await db_manager.fetch_all_rows(USERS_TABLE, USER_COLUMNS)
+
         if not users:
             await handle_empty_users(db_manager)
-            users = await db_manager.fetch_all(USERS_TABLE, USER_COLUMNS)
+            users = await db_manager.fetch_all_rows(USERS_TABLE, USER_COLUMNS)
         return users
     except DatabaseError as e:
         logger.exception(f"Error fetching users: {e}")
