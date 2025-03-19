@@ -187,22 +187,7 @@ class DatabaseManager:
         """
         Checks if the database exists and initializes it if necessary.
         """
-        """
-        OLD
-         try:
 
-            query = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self.__db_name}'"
-            self.__cursor.execute(query)
-
-            table_exists = self.__cursor.fetchall()
-            if not table_exists:
-                logging.warning('Table does not exist! ')
-                self._init_db()
-            else:
-                logging.info(f'Database {self.db_path} exists and checked!')
-        except sqlite3.Error as e:
-            raise DatabaseError(f"Check database existence operation failed: {e.args[0]}")
-        """
         try:
 
             query = f"SELECT name FROM sqlite_master WHERE type='table' AND name='{self._db_name}'"
