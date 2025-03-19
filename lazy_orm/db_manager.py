@@ -257,12 +257,16 @@ class DatabaseManager:
         try:
             logging.info(f"Executing query: {query}")
             self.cursor.execute(query, params or [])
+
             if fetch_mode:
                 rows = self.cursor.fetchall()
                 column_names = [description[0] for description in self.cursor.description]
                 return [dict(zip(column_names, row)) for row in rows]
+
             self.connection.commit()
+
         except sqlite3.Error as error:
             logging.exception(f"{operation_context} failed.")
             raise DatabaseError(f"{operation_context}: {error}")
+
         return None
