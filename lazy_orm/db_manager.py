@@ -191,6 +191,25 @@ class DatabaseManager:
         """
         Performs initial database setup using an SQL script if available.
         """
+        """
+                try:
+            logging.info(f'Current Path: {os.getcwd()}')
+
+            if start_path is None:
+                start_path = 'sql'
+
+            generic_creator_file = os.path.join(start_path, f'create_{self.__db_name}_db.sql')
+
+            with open(os.path.join(generic_creator_file)) as fd:
+                sql = fd.read()
+
+            self.__cursor.executescript(sql)
+            self.conn.commit()
+
+            logging.info(f'Database {self.__db_name} initialized successfully!')
+        except (FileNotFoundError, sqlite3.Error) as e:
+            raise DatabaseError(f'Database initialization failed: {e}')
+        """
         try:
             init_script_path = os.path.join(self.DEFAULT_DATABASE_DIRECTORY, 'init.sql')
             if os.path.exists(init_script_path):
