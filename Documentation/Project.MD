@@ -6,12 +6,14 @@
  - Implement 'ToDo' Model ( Date/Time, Subject, Priority(Low, Med, High), isDone)
 
 ---
-Backend: Django framework
+Backend:  FastAPI
 - API (CRUD )
 
 ---
 Frontend:
-- Console
+- Console ArgsParse, Click, Typer ( Preferable )
+- TUI : RICH
+
 - Telegram Bot ( Using AIOgram )
 
 ---
