@@ -8,3 +8,4 @@ class User:
     phone: str
     age: int
 
+#TODO: Add UnregisteredUser model
