@@ -27,7 +27,7 @@ class Todo:
                  position=None):
         self.task = task
         self.category = category
-        self.date_added = date_added or datetime.datetime.now()
+        self.date_added = date_added or datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
         self.date_completed = date_completed
         self.status = status
         self.position = position
