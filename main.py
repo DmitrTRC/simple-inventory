@@ -1,6 +1,7 @@
 import asyncio
 import logging
 from lazy_orm.db_manager import DatabaseManager
+from model.todo_model import Todo
 from service.user_srv import get_all_users, add_user
 from utils.logging_simp_inv import setup_logging
 
@@ -18,6 +19,10 @@ async def _add_sample_users(db_manager):
         result = add_user(db_manager, user['username'], user['email'], user['age'])
         logging.info(result) if result else logging.error('Error adding new User!')
 
+TODOS_DB_NAME = 'todos'
+SAMPLE_TODOS = [
+
+]
 
 async def main():
     db_manager = DatabaseManager(USERS_DB_NAME)

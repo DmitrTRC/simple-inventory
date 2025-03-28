@@ -24,13 +24,14 @@ class Todo:
                  date_added=None,
                  date_completed=None,
                  status: Status = Status.UNDONE,
-                 position=None):
+                 _id=None):
         self.task = task
         self.category = category
         self.date_added = date_added or datetime.datetime.now().strftime('%Y-%m-%d %H:%M')
         self.date_completed = date_completed
         self.status = status
-        self.position = position
+        self._id = _id
 
     def __repr__(self):
-        return f'{self.task}, {self.category}, {self.date_added}, {self.date_completed}, {self.status}, {self.position}'
+        return f'{self.task}, {self.category}, {self.date_added}, {self.date_completed}, {self.status}, {self._id}'
+

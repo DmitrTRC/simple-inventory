@@ -11,7 +11,7 @@ Backend:  FastAPI
 
 ---
 Frontend:
-- Console ArgsParse, Click, Typer ( Preferable )
+- Console ArgsParse, Click, Typer ( Preferable ))
 - TUI : RICH
 
 - Telegram Bot ( Using AIOgram )
