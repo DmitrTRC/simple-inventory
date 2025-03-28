@@ -1,7 +1,6 @@
 import asyncio
 import logging
 
-from inv_cli import todos
 from lazy_orm.db_manager import DatabaseManager
 from model.todo_model import Todo, Category
 from service.todo_srv import add_todo, get_all_todos
