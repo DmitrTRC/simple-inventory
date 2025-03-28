@@ -1,123 +1,113 @@
-Simple Inventory
+# Inventory Handler App
 
-======================
-
-Overview
+## Overview
 
 The Simple Inventory App is designed to help users effectively manage and track various personal items such as vehicles and weapons. The app aims to simplify inventory management, enhance organization, and provide quick access to inventory data for personal use.
 
-======================
+## Features
 
-Features
-----------------------
+### Vehicle Inventory Management
+- **Model Information:** Track vehicle models and their year of issue.
+- **Maintenance Tracking:** Record details about last maintenance, next scheduled maintenance, and replaced parts.
+- **Replacement Scheduling:** Specify parts to be replaced, including replacement schedules.
+- **Financial Tracking:** Keep track of purchase prices, maintenance costs, and overall vehicle expenses.
 
-Vehicle Inventory Management
+### Weapon Inventory Management
+- **Licensing:** Manage and track weapon licenses and renewals.
+- **Safety Checks:** Record and schedule regular safety inspections.
+- **Storage Management:** Keep detailed records of storage locations and security measures.
 
-Model Information: Track vehicle models and their year of issue.
-
-Maintenance Tracking: Record details about last maintenance, next scheduled maintenance, and replaced parts.
-
-Replacement Scheduling: Specify parts to be replaced, including replacement schedules.
-
-Financial Tracking: Keep track of purchase prices, maintenance costs, and overall vehicle expenses.
-----------------------
-
-Weapon Inventory Management
-
-Licensing: Manage and track weapon licenses and renewals.
-
-Safety Checks: Record and schedule regular safety inspections.
-
-Storage Management: Keep detailed records of storage locations and security measures.
-
-======================
-
-Architecture Overview
+## Architecture Overview
 
 The app will follow a client-server architecture, consisting of:
 
-----------------------
-Client:
+- **Client:**
+  - **Telegram Bot:** Provides a conversational interface using AIOgram for asynchronous interaction.
+  - **Console Interface:** Supports command-line interaction via ArgsParse, Click, or preferably Typer.
+  - **Text-based User Interface (TUI):** Rich library to provide an enhanced visual experience in terminal.
 
-Telegram Bot: Provides a conversational interface using AIOgram for asynchronous interaction.
+- **Server:**
+  - API-based backend using FastAPI for handling business logic, database operations, and authentication.
+  - SQLite: Lightweight database solution for persistent storage.
 
-Console Interface: Supports command-line interaction via ArgsParse, Click, or preferably Typer.
-
-Text-based User Interface (TUI): Rich library to provide an enhanced visual experience in terminal.
-
-----------------------
-Server:
-
-API-based backend using FastAPI for handling business logic, database operations, and authentication.
-
-SQLite: Lightweight database solution for persistent storage.
-
-======================
-
-Technologies
+## Technologies
 
 List the main technologies used:
+- **Programming Languages:** Python
+- **Frameworks and Libraries:** FastAPI, AIOgram, Typer, Rich
+- **Tools and Platforms:** Docker, SQLite, GitHub Actions
+- **Additional:** Pytest for testing, Poetry for dependency management
 
-Programming Languages: Python
+## Dependencies
 
-Frameworks and Libraries: FastAPI, AIOgram, Typer, Rich
+Specify key dependencies, prerequisites, or services required:
+- Docker: For containerization
+- SQLite: Database
+- FastAPI: API framework for backend development
+- Telegram Bot API via AIOgram
+- Rich: For enhanced terminal interface
+- Typer: Preferred for command-line interactions
 
-Tools and Platforms: Docker, SQLite, GitHub Actions
+## Installation and Setup
 
-Additional: Pytest for testing, Poetry for dependency management
-======================
+Detailed steps to set up the project locally:
 
-Dependencies
+```bash
+# Clone repository
+git clone <repository_url>
 
-Docker: For containerization
+# Navigate to the project folder
+cd <project_folder>
 
-SQLite: Database
+# Install dependencies
+uv venv
+source .venv/bin/activate
+uv pip install -r requirements.txt
+```
 
-FastAPI: API framework for backend development
+## Usage
 
-Telegram Bot API via AIOgram
+Provide instructions or examples demonstrating how to run the project:
 
-Rich: For enhanced terminal interface
+```bash
+uvicorn main:app --reload
+```
 
-Typer: Preferred for command-line interactions
-======================
+## Deployment
 
-Installation and Setup
+Describe steps and considerations for deploying the project to production or staging environments, including Docker deployment strategies.
 
-TBD
-======================
+## Project Structure
 
-Usage
+Outline the project’s file structure for clarity:
 
-TBD
-======================
-
-Deployment
-
-TBD
-======================
-
-Project Structure
-
+```
 project
-│─── folder1/
-│─── folder2/
-│─── main_file.extension
+│─── app/
+│    ├── routers/
+│    ├── schemas/
+│    └── models/
+│─── tests/
+│─── Dockerfile
+│─── requirements.txt
 └─── README.md
+```
 
-======================
-Roadmap
-TBD
-======================
+## Roadmap
 
-License
+- [ ] Barcode scanning for quick item addition
+- [ ] Cloud synchronization and backup
+- [ ] Notifications for important events (license renewals, maintenance)
 
-TBD
-======================
+## License
 
-Contributors
+Specify the project's license here.
 
-Dmitry  
-alekslk
-ArinaMdm
-markea_bg 
+## Contributors
+
+List key contributors or your contact information.
+
+---
+
+Feel free to add, remove, or modify sections as needed to better fit your project specifics.
+
