@@ -1,97 +1,99 @@
-from typing import List
-
+from typing import List, Optional
 from lazy_orm.db_manager import DatabaseManager, DatabaseError
 from utils.email import validate_and_normalize_email
-
 import logging
 
+# Setup logger
+logger = logging.getLogger(__name__)
+
+# Constants
 USERS_TABLE = 'users'
-USERS_COLUMNS = ['id', 'email', 'username', 'phone', 'age']
+USER_COLUMNS = ['id', 'email', 'username', 'phone', 'age']
 
 
-def is_user_exists(db_manager: DatabaseManager, username: str) -> bool:
+# TODO: Improve Errors handling . add_user: status?
+
+
+def is_user_exists(db_manager: DatabaseManager, username: str, email: str) -> bool:
     """
-    :param db_manager: The database manager instance used to interact with the database.
-    :param username: The username of the user to check for existence in the database.
-    :return: A boolean value indicating whether the user exists (True) or not (False).
+    Checks if the user exists in the database based on username or email.
     """
-    users = db_manager.fetch_if('users', f'username="{username}"')
+    condition = f'username="{username}" OR email="{email}"'
+    users = db_manager.fetch_rows_if(USERS_TABLE, condition)
     return len(users) > 0
 
 
 def log_user_addition(username: str, email: str) -> None:
     """
-    :param username: The username of the new user being added.
-    :param email: The email address of the new user being added.
-    :return: None
+    Logs the addition of a new user.
     """
-    logging.info(f'New User {username} with email: {email} added.')
+    logger.info(f'New User {username} with email: {email} added.')
 
 
-def add_user(orm: DatabaseManager, username: str, email: str, age: int) -> bool:
+def _add_user(
+        db_manager: DatabaseManager, column_values: dict, log_message: str
+) -> Optional[str]:
     """
-    :param orm: Instance of the DatabaseManager used to interact with the database.
-    :param username: The username of the user to be added to the database.
-    :param email: The email address of the user to be added; it will be validated and normalized before insertion.
-    :param age: The age of the user to be added to the database.
-    :return: Returns True if the user is successfully added, otherwise returns False due to errors.
+    Helper function to add a user to the database and log the action.
     """
     try:
-        column_values = {
-            'username': username,
-            'email': validate_and_normalize_email(email),
-            'age': age,
-        }
-        orm.insert('users', column_values)
-        log_user_addition(username, email)
-        return True
+        db_manager.insert_row(USERS_TABLE, column_values)
+        logger.info(log_message)
+        return 'User added successfully.'
     except DatabaseError as e:
-        logging.exception(f"Error adding user: {e}")
-        return False
+        logger.exception(f"Error adding user: {e}")
+        return None
 
 
-async def add_admin_user(db_manager):
+def add_user(db_manager: DatabaseManager, username: str, email: str, age: int) -> Optional[str]:
     """
-    Adds an admin user to the database with predefined details.
-
-    :param db_manager: The database manager instance responsible for handling database operations.
-    :return: None
+    Adds a new user to the database if they do not already exist.
     """
-    try:
-        column_values = {
-            'username': 'Admin',
-            'email': '9984398@gmail.com',
-            'age': 100,
-            'phone': '+79219984444',
-        }
-        db_manager.insert('users', column_values)
-        logging.info('Admin user added successfully.')
-    except DatabaseError as e:
-        logging.exception(f"Error adding admin user: {e}")
+    normalized_email = validate_and_normalize_email(email)
+
+    if is_user_exists(db_manager, username, normalized_email):
+        return 'User already exists!'
+
+    column_values = {
+        'username': username,
+        'email': normalized_email,
+        'age': age,
+    }
+    return _add_user(db_manager, column_values, f'New User {username} added.')
 
 
-async def handle_empty_users(db_manager: DatabaseManager):
+async def add_admin_user(db_manager: DatabaseManager) -> None:
     """
-    Handles the case when there are no users in the database by adding an admin user.
+    Adds a predefined admin user to the database.
+    """
+    column_values = {
+        'username': 'Admin',
+        'email': '9984398@gmail.com',
+        'age': 100,
+        'phone': '+79219984444',
+    }
+    _add_user(db_manager, column_values, 'Admin user added successfully.')
 
-    :param db_manager: An instance of DatabaseManager used to interact with the database.
-    :return: None
+
+async def handle_empty_users(db_manager: DatabaseManager) -> None:
+    """
+    Adds an admin user if the database has no users.
     """
     await add_admin_user(db_manager)
-    logging.info('No users found. Admin User have been added.')
+    logger.info('No users found. Admin User has been added.')
 
 
 async def get_all_users(db_manager: DatabaseManager) -> List[dict]:
+    """
+    Fetches all users from the database or adds an admin user if there are no users.
+    """
     try:
-        users = await db_manager.fetch_all(USERS_TABLE, USERS_COLUMNS)
+        users = await db_manager.fetch_all_rows(USERS_TABLE, USER_COLUMNS)
+
         if not users:
             await handle_empty_users(db_manager)
-            users = await db_manager.fetch_all(USERS_TABLE, USERS_COLUMNS)
+            users = await db_manager.fetch_all_rows(USERS_TABLE, USER_COLUMNS)
         return users
     except DatabaseError as e:
-        logging.exception(f"Error fetching users: {e}")
+        logger.exception(f"Error fetching users: {e}")
         return []
-
-
-async def _is_mail_unique(db_manager: DatabaseManager, email: str) -> bool:
-    pass

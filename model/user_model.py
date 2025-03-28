@@ -7,3 +7,5 @@ class User:
     email: str
     phone: str
     age: int
+
+#TODO: Add UnregisteredUser model
