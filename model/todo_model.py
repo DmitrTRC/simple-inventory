@@ -32,6 +32,8 @@ class Todo:
         self.status = status
         self._id = _id
 
+    def get_id(self):
+        return self._id
+
     def __repr__(self):
         return f'{self.task}, {self.category}, {self.date_added}, {self.date_completed}, {self.status}, {self._id}'
-
