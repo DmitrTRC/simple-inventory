@@ -5,7 +5,7 @@ from rich.table import Table
 
 from lazy_orm.db_manager import DatabaseManager
 from model.todo_model import Todo, Category, Status
-from service.todo_srv import add_todo, get_all_todos
+from service.todo_srv import add_todo, get_all_todos, delete_todo_by_id
 
 console = Console()
 
@@ -75,10 +75,18 @@ async def list_tasks_main():
 @app.command('del', short_help='Delete a task by ID')
 def delete_task(task_id: int):
     asyncio.run(delete_task_main(task_id))
+    asyncio.run(list_tasks_main())
 
 
 async def delete_task_main(_id: int):
-    pass
+    try:
+        deleted = await delete_todo_by_id(todo_manager, _id)
+        if deleted:
+            console.print(f"[green]Task with ID {_id} deleted successfully![/green]")
+        else:
+            console.print(f"[yellow]No task found with ID {_id}.[/yellow]")
+    except Exception as e:
+        console.print(f"[red]Failed to delete task: {e}[/red]")
 
 
 @app.command('update', short_help='Update a task by ID')
