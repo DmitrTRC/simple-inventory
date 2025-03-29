@@ -1,4 +1,5 @@
 import typer
+from aiohttp.web_routedef import delete
 from rich.console import Console
 from rich.table import Table
 
@@ -73,24 +74,20 @@ async def list_tasks_main():
 
 @app.command('del', short_help='Delete a task by ID')
 def delete_task(task_id: int):
-    # if 0 < task_id <= len(todos):
-    #     removed_task = todos.pop(task_id - 1)
-    #     console.print(f"Task '{removed_task}' deleted successfully!")
-    #     list_tasks()
-    # else:
-    #     console.print("Invalid task ID!")
-    list_tasks()
+    asyncio.run(delete_task_main(task_id))
+
+
+async def delete_task_main(_id: int):
+    pass
 
 
 @app.command('update', short_help='Update a task by ID')
 def update_task(task_id: int, new_name: str):
-    # if 0 < task_id <= len(todos):
-    #     todos[task_id - 1].task = new_name
-    #     console.print(f"Task #{task_id} updated to '{new_name}' successfully!")
-    #     list_tasks()
-    # else:
-    #     console.print("Invalid task ID!")
-    list_tasks()
+    asyncio.run(update_task_main(task_id, new_name))
+
+
+async def update_task_main(_id: int, new_name: str):
+    pass
 
 
 if __name__ == '__main__':
