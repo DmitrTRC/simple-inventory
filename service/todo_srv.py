@@ -96,7 +96,7 @@ async def get_all_todos(db_manager: DatabaseManager) -> List[dict]:
         return []
 
 
-async def delete_todo_by_id(db_manager: DatabaseManager, task_id: int):
+async def delete_todo_by_id(db_manager: DatabaseManager, task_id: int) -> bool:
     """
     Deletes a task from the database by its ID.
     """
@@ -104,5 +104,7 @@ async def delete_todo_by_id(db_manager: DatabaseManager, task_id: int):
     try:
         db_manager.delete_row(TODOS_TABLE, task_id)
         logger.info(f'Task with ID {task_id} deleted successfully.')
+        return True
     except DatabaseError as e:
         logger.exception(f"Error deleting task with ID {task_id}: {e}")
+        return False

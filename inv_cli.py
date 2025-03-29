@@ -73,8 +73,8 @@ async def list_tasks_main():
 
 
 @app.command('del', short_help='Delete a task by ID')
-def delete_task(task_id: int):
-    asyncio.run(delete_task_main(task_id))
+def delete_task(task_id: str):
+    asyncio.run(delete_task_main(int(task_id)))
     asyncio.run(list_tasks_main())
 
 
