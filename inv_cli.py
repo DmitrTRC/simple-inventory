@@ -5,7 +5,7 @@ from rich.table import Table
 
 from lazy_orm.db_manager import DatabaseManager
 from model.todo_model import Todo, Category, Status
-from service.todo_srv import add_todo, get_all_todos, delete_todo_by_id
+from service.todo_srv import add_todo, get_all_todos, delete_todo_by_id, get_id_by_order_number, logger
 
 console = Console()
 
@@ -59,9 +59,9 @@ async def list_tasks_main():
     table.add_column("Date Completed", style="blue")
     table.add_column("Status", style="red", justify="center")
 
-    for todo_item in todos:
+    for represent_number, todo_item in enumerate(todos, start=1):
         table.add_row(
-            str(todo_item.get('id', "Unknown")),
+            str(represent_number),
             str(todo_item.get('task', "N/A")),
             str(todo_item.get('category', "N/A")),
             str(todo_item.get('date_added', "N/A")),
@@ -74,7 +74,10 @@ async def list_tasks_main():
 
 @app.command('del', short_help='Delete a task by ID')
 def delete_task(task_id: str):
-    asyncio.run(delete_task_main(int(task_id)))
+    corresponded_id = asyncio.run(get_id_by_order_number(todo_manager, int(task_id)))
+    logger.info(f"Corresponded id: {corresponded_id}")
+
+    asyncio.run(delete_task_main(corresponded_id))
     asyncio.run(list_tasks_main())
 
 

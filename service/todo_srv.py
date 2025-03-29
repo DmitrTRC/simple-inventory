@@ -108,3 +108,18 @@ async def delete_todo_by_id(db_manager: DatabaseManager, task_id: int) -> bool:
     except DatabaseError as e:
         logger.exception(f"Error deleting task with ID {task_id}: {e}")
         return False
+
+
+async def get_id_by_order_number(db_manager: DatabaseManager, order_number: int) -> int:
+    """
+    Get id by list order number  
+    """
+    try:
+        todos = await db_manager.fetch_all_rows(TODOS_TABLE, ['id'])
+        if 0 < order_number <= len(todos):
+            return todos[order_number - 1]['id']
+        else:
+            raise IndexError("Order number out of range.")
+    except (DatabaseError, IndexError) as e:
+        logger.exception(f"Error fetching ID for order number {order_number}: {e}")
+        raise e
