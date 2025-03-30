@@ -70,7 +70,6 @@ async def list_tasks_main():
             str(todo_item.get('date_completed', "N/A")),
             '✅' if todo_item.get('status') == '1' else '📌'
         )
-        logger.info(f"Status: {todo_item.get('status')}, type: {type(todo_item.get('status'))}")
 
     console.print(table)
 
