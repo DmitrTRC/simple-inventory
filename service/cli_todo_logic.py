@@ -15,12 +15,6 @@ TODOS_DB_NAME = 'todos'
 todo_manager = DatabaseManager(TODOS_DB_NAME)
 
 
-# Async handler wrapper
-def run_async_task(coroutine):
-    try:
-        asyncio.run(coroutine)
-    except Exception as e:
-        console.print(f"[red]An error occurred: {e}[/red]")
 
 
 # Utility function to validate category
