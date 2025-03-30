@@ -28,7 +28,7 @@ def log_todo_addition(task: str, category: str) -> None:
     logger.info(f'New Task {task} in category: {category} added.')
 
 
-def _add_todo(
+async def _add_todo(
         db_manager: DatabaseManager, column_values: dict, log_message: str
 ) -> Optional[str]:
     """
@@ -43,7 +43,7 @@ def _add_todo(
         return None
 
 
-def add_todo(db_manager: DatabaseManager, todo: Todo) -> Optional[str]:
+async def add_todo(db_manager: DatabaseManager, todo: Todo) -> Optional[str]:
     """
     Adds a new task to the database if they do not already exist.
     """
@@ -58,7 +58,7 @@ def add_todo(db_manager: DatabaseManager, todo: Todo) -> Optional[str]:
         'date_completed': todo.date_completed,
         'status': todo.status.value
     }
-    return _add_todo(db_manager, column_values, f'New Todo {todo.task} added.')
+    return  await _add_todo(db_manager, column_values, f'New Todo {todo.task} added.')
 
 
 async def add_welcome_todo(db_manager: DatabaseManager) -> None:
