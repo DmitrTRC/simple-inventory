@@ -1,11 +1,13 @@
 import typer
-from aiohttp.web_routedef import delete
 from rich.console import Console
 from rich.table import Table
 
 from lazy_orm.db_manager import DatabaseManager
 from model.todo_model import Todo, Category, Status
-from service.todo_srv import add_todo, get_all_todos, delete_todo_by_id, get_id_by_order_number, logger
+from service.todo_srv import add_todo, get_all_todos, delete_todo_by_id, get_id_by_order_number, logger, \
+    update_todo_by_id
+
+from utils.logging_simp_inv import setup_logging
 
 console = Console()
 
@@ -75,7 +77,7 @@ async def list_tasks_main():
 @app.command('del', short_help='Delete a task by ID')
 def delete_task(task_id: str):
     corresponded_id = asyncio.run(get_id_by_order_number(todo_manager, int(task_id)))
-    logger.info(f"Corresponded id: {corresponded_id}")
+    logger.debug(f"Corresponded id: {corresponded_id}")
 
     asyncio.run(delete_task_main(corresponded_id))
     asyncio.run(list_tasks_main())
@@ -94,12 +96,28 @@ async def delete_task_main(_id: int):
 
 @app.command('update', short_help='Update a task by ID')
 def update_task(task_id: int, new_name: str):
+    corresponded_id = asyncio.run(get_id_by_order_number(todo_manager, int(task_id)))
+    logger.debug(f"Corresponded id: {corresponded_id}")
+
     asyncio.run(update_task_main(task_id, new_name))
+    asyncio.run(list_tasks_main())
 
 
 async def update_task_main(_id: int, new_name: str):
-    pass
+    try:
+        if not new_name:
+            console.print("[red]Error: Task name cannot be empty.[/red]")
+            return
+
+        updated = await update_todo_by_id(todo_manager, _id, new_name)
+        if updated:
+            console.print(f"[green]Task with ID {_id} updated successfully![/green]")
+        else:
+            console.print(f"[yellow]No task found with ID {_id}.[/yellow]")
+    except Exception as e:
+        console.print(f"[red]Failed to update task: {e}[/red]")
 
 
 if __name__ == '__main__':
+    setup_logging()
     app()

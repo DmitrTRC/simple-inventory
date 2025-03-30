@@ -110,6 +110,17 @@ async def delete_todo_by_id(db_manager: DatabaseManager, task_id: int) -> bool:
         return False
 
 
+async def update_todo_by_id(db_manger: DatabaseManager, task_id: int, new_task: str) -> bool:
+    try:
+        condition = f"id = {task_id}"
+        column_values = {"task": new_task}
+        db_manger.update_rows("todos", column_values, condition)
+        return True
+    except DatabaseError as e:
+        logger.exception(f"Error updating task with ID {task_id}: {e}")
+        return False
+
+
 async def get_id_by_order_number(db_manager: DatabaseManager, order_number: int) -> int:
     """
     Get id by list order number  
