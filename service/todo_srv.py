@@ -68,7 +68,7 @@ async def add_welcome_todo(db_manager: DatabaseManager) -> None:
     column_values = {
         'task': 'Welcome to your Todo Manager!',
     }
-    _add_todo(db_manager, column_values, 'Welcome task added successfully.')
+    await _add_todo(db_manager, column_values, 'Welcome task added successfully.')
 
 
 async def handle_empty_todos(db_manager: DatabaseManager) -> None:
@@ -121,18 +121,18 @@ async def update_todo_by_id(db_manger: DatabaseManager, task_id: int, new_task: 
         return False
 
 
-async def get_id_by_order_number(db_manager: DatabaseManager, order_number: int) -> int:
+async def get_id_by_index(db_manager: DatabaseManager, index: int) -> int:
     """
     Get id by list order number  
     """
     try:
         todos = await db_manager.fetch_all_rows(TODOS_TABLE, ['id'])
-        if 0 < order_number <= len(todos):
-            return todos[order_number - 1]['id']
+        if 0 < index <= len(todos):
+            return todos[index - 1]['id']
         else:
             raise IndexError("Order number out of range.")
     except (DatabaseError, IndexError) as e:
-        logger.exception(f"Error fetching ID for order number {order_number}: {e}")
+        logger.exception(f"Error fetching ID for order number {index}: {e}")
         raise e
 
 
