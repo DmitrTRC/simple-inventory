@@ -2,7 +2,7 @@ from typing import List, Optional
 from lazy_orm.db_manager import DatabaseManager, DatabaseError
 import logging
 
-from model.todo_model import Todo
+from model.todo_model import Todo, Status
 
 # Setup logger
 logger = logging.getLogger(__name__)
@@ -134,3 +134,18 @@ async def get_id_by_order_number(db_manager: DatabaseManager, order_number: int)
     except (DatabaseError, IndexError) as e:
         logger.exception(f"Error fetching ID for order number {order_number}: {e}")
         raise e
+
+
+async def set_status(db_manager: DatabaseManager, task_id: int, status: Status) -> bool:
+    """
+    Updates the status of a task in the database by its ID.
+    """
+    try:
+        condition = f"id = {task_id}"
+        column_values = {"status": status.value}
+        db_manager.update_rows(TODOS_TABLE, column_values, condition)
+        logger.info(f"Task with ID {task_id} status updated to {status.name}.")
+        return True
+    except DatabaseError as e:
+        logger.exception(f"Error updating status for task with ID {task_id}: {e}")
+        return False

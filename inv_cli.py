@@ -5,7 +5,7 @@ from rich.table import Table
 from lazy_orm.db_manager import DatabaseManager
 from model.todo_model import Todo, Category, Status
 from service.todo_srv import add_todo, get_all_todos, delete_todo_by_id, get_id_by_order_number, logger, \
-    update_todo_by_id
+    update_todo_by_id, set_status
 
 from utils.logging_simp_inv import setup_logging
 
@@ -68,8 +68,9 @@ async def list_tasks_main():
             str(todo_item.get('category', "N/A")),
             str(todo_item.get('date_added', "N/A")),
             str(todo_item.get('date_completed', "N/A")),
-            '✅' if todo_item.get('status') == 1 else '📌'
+            '✅' if todo_item.get('status') == '1' else '📌'
         )
+        logger.info(f"Status: {todo_item.get('status')}, type: {type(todo_item.get('status'))}")
 
     console.print(table)
 
@@ -117,7 +118,25 @@ async def update_task_main(_id: int, new_name: str):
     except Exception as e:
         console.print(f"[red]Failed to update task: {e}[/red]")
 
+@app.command('done', short_help='Set status: Done')
+def set_task_done(task_id: int):
+    corresponded_id = asyncio.run(get_id_by_order_number(todo_manager, int(task_id)))
+    logger.debug(f"Corresponded id: {corresponded_id}")
 
+    asyncio.run(set_task_done_main(task_id))
+    asyncio.run(list_tasks_main())
+
+
+async def set_task_done_main(_id: int):
+    try:
+        status = await set_status(todo_manager, _id, Status.DONE)
+        if status:
+            console.print(f"[green]Task with ID {_id} set to Done successfully![/green]")
+        else:
+            console.print(f"[yellow]No task found with ID {_id}.[/yellow]")
+    except Exception as e:
+        console.print(f"[red]Failed to set task status: {e}[/red]")
+    
 if __name__ == '__main__':
     setup_logging()
     app()
