@@ -94,3 +94,43 @@ async def get_all_todos(db_manager: DatabaseManager) -> List[dict]:
     except DatabaseError as e:
         logger.exception(f"Error fetching tasks: {e}")
         return []
+
+
+async def delete_todo_by_id(db_manager: DatabaseManager, task_id: int) -> bool:
+    """
+    Deletes a task from the database by its ID.
+    """
+
+    try:
+        db_manager.delete_row(TODOS_TABLE, task_id)
+        logger.info(f'Task with ID {task_id} deleted successfully.')
+        return True
+    except DatabaseError as e:
+        logger.exception(f"Error deleting task with ID {task_id}: {e}")
+        return False
+
+
+async def update_todo_by_id(db_manger: DatabaseManager, task_id: int, new_task: str) -> bool:
+    try:
+        condition = f"id = {task_id}"
+        column_values = {"task": new_task}
+        db_manger.update_rows("todos", column_values, condition)
+        return True
+    except DatabaseError as e:
+        logger.exception(f"Error updating task with ID {task_id}: {e}")
+        return False
+
+
+async def get_id_by_order_number(db_manager: DatabaseManager, order_number: int) -> int:
+    """
+    Get id by list order number  
+    """
+    try:
+        todos = await db_manager.fetch_all_rows(TODOS_TABLE, ['id'])
+        if 0 < order_number <= len(todos):
+            return todos[order_number - 1]['id']
+        else:
+            raise IndexError("Order number out of range.")
+    except (DatabaseError, IndexError) as e:
+        logger.exception(f"Error fetching ID for order number {order_number}: {e}")
+        raise e
