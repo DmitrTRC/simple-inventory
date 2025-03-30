@@ -59,7 +59,7 @@ async def list_tasks_main():
     table.add_column("Category", style="green")
     table.add_column("Date Added", style="yellow")
     table.add_column("Date Completed", style="blue")
-    table.add_column("Status", style="red", justify="center")
+    table.add_column("Status", style="green", justify="center", min_width=10 )
 
     for represent_number, todo_item in enumerate(todos, start=1):
         table.add_row(
@@ -68,7 +68,7 @@ async def list_tasks_main():
             str(todo_item.get('category', "N/A")),
             str(todo_item.get('date_added', "N/A")),
             str(todo_item.get('date_completed', "N/A")),
-            '✅' if todo_item.get('status') == '1' else '📌'
+            'Completed' if todo_item.get('status') == '1' else '📌'
         )
 
     console.print(table)
